@@ -20,8 +20,9 @@
     }
 
     img.logo {
-      width: 100px;
+      width: 120px;
       height: auto;
+      border-radius: 12px;
       margin-bottom: 40px;
     }
 
@@ -66,7 +67,12 @@
       transition: background 0.3s ease;
     }
 
-    button:hover {
+    button:disabled {
+      background: #888;
+      cursor: wait;
+    }
+
+    button:hover:not(:disabled) {
       background: #222;
     }
 
@@ -74,12 +80,18 @@
       margin-top: 25px;
       color: green;
       font-size: 1rem;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .success-message.show {
+      opacity: 1;
     }
   </style>
 </head>
 <body>
   <img
-    src="https://i.ibb.co/40Gxn3P/Screenshot-2025-06-16-at-4-17-07-PM-removebg-preview.png"
+    src="https://drhelencarter.com/wp-content/uploads/2021/01/sisyphus.jpeg"
     alt="Logo"
     class="logo"
   />
@@ -96,9 +108,13 @@
   <script>
     const form = document.getElementById("waitlist-form");
     const successMsg = document.getElementById("successMsg");
+    const button = form.querySelector("button");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
+      button.disabled = true;
+      const originalText = button.textContent;
+      button.textContent = "Joining...";
 
       const formData = new FormData(form);
       const email = formData.get("email");
@@ -111,14 +127,21 @@
 
         if (response.ok) {
           successMsg.textContent = "Thanks! You’re on the waitlist.";
+          successMsg.classList.add("show");
           form.reset();
         } else {
           successMsg.textContent = "Something went wrong. Please try again.";
+          successMsg.classList.add("show");
         }
       } catch (error) {
         successMsg.textContent = "Network error. Try again later.";
+        successMsg.classList.add("show");
+      } finally {
+        button.disabled = false;
+        button.textContent = originalText;
       }
     });
   </script>
 </body>
 </html>
+
